@@ -66,6 +66,10 @@ public class QuackJunitImport extends AbstractMojo{
     @Parameter(property = "uploadChunkSize", name = "uploadChunkSize", defaultValue = "20")
     private int uploadChunkSize;
 
+    @Parameter(property = "importResource", name = "importResource", defaultValue = "maven-junit-${project.groupId}-${project.artifactId}")
+    private String importResource;
+
+
     @Override
     public void execute() {
         getLog().info( "Preparing QuAck Project data" );
@@ -86,6 +90,11 @@ public class QuackJunitImport extends AbstractMojo{
     private void uploadTestcases(List<TestCase> testCases) {
         getLog().info(format("Found %s testcases to upload", testCases.size()));
         QuackClient client = QuackClietnUtils.getClient(apiToken, apiEndpoint, apiTimeout);
+
+        getLog().info(format("Marking testcase of import resource %s as obsolete", importResource));
+        client.deleteTestcasesByImportResource(quackProject, importResource);
+
+        getLog().info(format("Sending testcases to QuAck in chunks by %s", uploadChunkSize));
         List<List<TestCase>> partitions = ListUtils.partition(testCases, uploadChunkSize);
         for (int i = 0; i < partitions.size(); i++ ) {
             try {
@@ -104,7 +113,10 @@ public class QuackJunitImport extends AbstractMojo{
     }
 
     private TestCase convert(Method method) {
-        TestCase testCase = (TestCase) new TestCase().withName(method.getName()).withAlias(getHash(method));
+        TestCase testCase = (TestCase) new TestCase().
+                withName(method.getName()).
+                withAlias(getHash(method)).
+                withImportResource(importResource);
         testCase.getMetaData().put("class", method.getDeclaringClass());
         testCase.getMetaData().put("method", method.getName());
         testCase.getMetaData().put("parameters", Stream.of(method.getParameterTypes()).map(Class::getName).collect(toList()));
