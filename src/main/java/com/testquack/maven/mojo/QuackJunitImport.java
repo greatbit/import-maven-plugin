@@ -66,7 +66,7 @@ public class QuackJunitImport extends AbstractMojo{
     @Parameter(property = "uploadChunkSize", name = "uploadChunkSize", defaultValue = "20")
     private int uploadChunkSize;
 
-    @Parameter(property = "importResource", name = "importResource", defaultValue = "maven-junit-${project.groupId}-${project.artifactId}")
+    @Parameter(property = "importResource", name = "importResource", defaultValue = "maven-junit:${project.groupId}:${project.artifactId}")
     private String importResource;
 
 
@@ -120,6 +120,9 @@ public class QuackJunitImport extends AbstractMojo{
         testCase.getMetaData().put("class", method.getDeclaringClass());
         testCase.getMetaData().put("method", method.getName());
         testCase.getMetaData().put("parameters", Stream.of(method.getParameterTypes()).map(Class::getName).collect(toList()));
+        testCase.getMetaData().put("groupId", mavenProject.getGroupId());
+        testCase.getMetaData().put("artifactId", mavenProject.getArtifactId());
+        testCase.getMetaData().put("version", mavenProject.getVersion());
         return testCase;
     }
 
