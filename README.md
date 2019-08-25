@@ -1,0 +1,20 @@
+```
+<plugin>
+    <groupId>com.testquack</groupId>
+    <artifactId>junit-import-maven-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <configuration>
+        <apiToken>abc</apiToken>
+        <quackProject>quackui</quackProject>
+        <apiEndpoint>http://quack.com/api/</apiEndpoint>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>process-test-classes</phase>
+            <goals>
+                <goal>junit-import</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
