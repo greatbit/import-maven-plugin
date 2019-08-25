@@ -26,8 +26,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -92,7 +90,12 @@ public class QuackJunitImport extends AbstractMojo{
         QuackClient client = QuackClietnUtils.getClient(apiToken, apiEndpoint, apiTimeout);
 
         getLog().info(format("Marking testcase of import resource %s as obsolete", importResource));
-        client.deleteTestcasesByImportResource(quackProject, importResource);
+        try {
+            client.deleteTestcasesByImportResource(quackProject, importResource).execute();
+        } catch (IOException e) {
+            getLog().error(format("Unable to obsolete testcase for import resource %s", importResource), e);
+            throw new RuntimeException(e);
+        }
 
         getLog().info(format("Sending testcases to QuAck in chunks by %s", uploadChunkSize));
         List<List<TestCase>> partitions = ListUtils.partition(testCases, uploadChunkSize);
