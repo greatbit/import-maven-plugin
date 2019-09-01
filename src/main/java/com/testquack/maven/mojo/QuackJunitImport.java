@@ -89,7 +89,7 @@ public class QuackJunitImport extends AbstractMojo{
         getLog().info(format("Found %s testcases to upload", testCases.size()));
         QuackClient client = QuackClietnUtils.getClient(apiToken, apiEndpoint, apiTimeout);
 
-        getLog().info(format("Marking testcase of import resource %s as obsolete", importResource));
+        getLog().debug(format("Marking testcase of import resource %s as obsolete", importResource));
         try {
             client.deleteTestcasesByImportResource(quackProject, importResource).execute();
         } catch (IOException e) {
@@ -117,7 +117,7 @@ public class QuackJunitImport extends AbstractMojo{
 
     private TestCase convert(Method method) {
         TestCase testCase = (TestCase) new TestCase().
-                withName(method.getName()).
+                withImportedName(method.getName()).
                 withAlias(getHash(method)).
                 withImportResource(importResource);
         testCase.getMetaData().put("class", method.getDeclaringClass());
@@ -148,7 +148,7 @@ public class QuackJunitImport extends AbstractMojo{
             List<String> classpathElements = mavenProject.getTestCompileSourceRoots();
             classpathElements.addAll(mavenProject.getTestClasspathElements());
             classpathElements.add(mavenProject.getBuild().getTestOutputDirectory());
-            getLog().info( "Classpath " + classpathElements );
+            getLog().debug( "Classpath " + classpathElements );
             return classpathElements.stream().
                     filter(Objects::nonNull).
                     map(File::new).map(File::toURI).map(this::toUrl).

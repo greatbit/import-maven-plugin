@@ -177,6 +177,24 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.6.0</version>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>${project.groupId}</groupId>-->
+                <!--<artifactId>import-maven-plugin</artifactId>-->
+                <!--<version>${project.version}</version>-->
+                <!--<configuration>-->
+                    <!--<apiToken>abc</apiToken>-->
+                    <!--<quackProject>quackui</quackProject>-->
+                    <!--<apiEndpoint>http://quack.com/api/</apiEndpoint>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>process-test-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>junit-import</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
