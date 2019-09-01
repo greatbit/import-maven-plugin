@@ -119,7 +119,8 @@ public class QuackJunitImport extends AbstractMojo{
         TestCase testCase = (TestCase) new TestCase().
                 withImportedName(method.getName()).
                 withAlias(getHash(method)).
-                withImportResource(importResource);
+                withImportResource(importResource).
+                withAutomated(true);
         testCase.getMetaData().put("class", method.getDeclaringClass());
         testCase.getMetaData().put("method", method.getName());
         testCase.getMetaData().put("parameters", Stream.of(method.getParameterTypes()).map(Class::getName).collect(toList()));
