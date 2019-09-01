@@ -1,3 +1,8 @@
+Quack Import Plugin
+==========
+
+A maven plugin that allows you to import automated testcases and reports (in progress) to QuAck
+
 #### Import JUmit4 tests
 ```
 <plugin>
