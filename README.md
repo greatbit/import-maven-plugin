@@ -8,7 +8,7 @@ A maven plugin that allows you to import automated testcases and reports (in pro
 <plugin>
     <groupId>com.testquack</groupId>
     <artifactId>import-maven-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <configuration>
         <apiToken>abc</apiToken>
         <quackProject>quackui</quackProject>
