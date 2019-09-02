@@ -12,9 +12,9 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
-    <name>Transitive Dependency Plugin</name>
-    <description>Plugin is used to detect tranitive dependencies in maven project</description>
-    <url>https://github.com/azee/transitive-dependency-plugin</url>
+    <name>Quack Import Maven Plugin</name>
+    <description>Plugin is used to import tests and results to QuAck</description>
+    <url>https://github.com/greatbit/import-maven-plugin</url>
     <developers>
         <developer>
             <id>owner</id>
@@ -24,9 +24,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:azee/transitive-dependency-plugin</connection>
-        <developerConnection>scm:git:git@github.com:azee/transitive-dependency-plugin.git</developerConnection>
-        <url>scm:git:git@github.com:azee/transitive-dependency-plugin.git</url>
+        <connection>scm:git:git@github.com:greatbit/import-maven-plugin</connection>
+        <developerConnection>scm:git:git@github.com:greatbit/import-maven-plugin.git</developerConnection>
+        <url>scm:git:git@github.com:greatbit/import-maven-plugin.git</url>
     </scm>
 
     <licenses>
