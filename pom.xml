@@ -15,6 +15,10 @@
     <name>Quack Import Maven Plugin</name>
     <description>Plugin is used to import tests and results to QuAck</description>
     <url>https://github.com/greatbit/import-maven-plugin</url>
+    <organization>
+        <name>QuAck</name>
+        <url>https://testquack.com</url>
+    </organization>
     <developers>
         <developer>
             <id>owner</id>
@@ -24,9 +28,9 @@
         </developer>
     </developers>
     <scm>
+        <url>scm:git:git@github.com:greatbit/import-maven-plugin.git</url>
         <connection>scm:git:git@github.com:greatbit/import-maven-plugin</connection>
         <developerConnection>scm:git:git@github.com:greatbit/import-maven-plugin.git</developerConnection>
-        <url>scm:git:git@github.com:greatbit/import-maven-plugin.git</url>
     </scm>
 
     <licenses>
