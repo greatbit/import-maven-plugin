@@ -1,7 +1,8 @@
 Quack Import Plugin
 ==========
 
-A maven plugin that allows you to import automated testcases and reports (in progress) to QuAck
+The plugin allows importing testcases to QuAck. All modifications made on testcases in QuAck manually will remain. However, tests from the same Maven project will be reconfigured on import - new will appear, removed will disappear.
+
 
 #### Import JUmit4 tests
 ```
