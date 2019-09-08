@@ -132,8 +132,7 @@ public class QuackJunitImport extends AbstractMojo{
 
     private String getHash(Method method) {
         try {
-            return getMd5String(method.toString() +
-                    Stream.of(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")));
+            return getMd5String(method.toString());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Unable to create hash for the method " + method, e);
         }
