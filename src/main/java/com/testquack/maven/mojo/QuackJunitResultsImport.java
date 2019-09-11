@@ -4,6 +4,8 @@ import com.testquack.beans.Launch;
 import com.testquack.beans.LaunchStatus;
 import com.testquack.beans.LaunchTestCase;
 import com.testquack.beans.LaunchTestCaseTree;
+import com.testquack.maven.client.QuackClient;
+import com.testquack.maven.client.QuackClietnUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -17,8 +19,10 @@ import org.apache.maven.reporting.MavenReportException;
 import ru.greatbit.utils.serialize.JsonSerializer;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -43,6 +47,9 @@ public class QuackJunitResultsImport extends AbstractMojo{
 
     @Parameter(property = "apiTimeout", name = "apiTimeout", defaultValue = "60000")
     private long apiTimeout;
+
+    @Parameter(property = "launchNamePrefix", name = "launchNamePrefix", defaultValue = "Junit Import")
+    private String launchNamePrefix;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -70,10 +77,10 @@ public class QuackJunitResultsImport extends AbstractMojo{
                         map(this::convertTestcase).
                         collect(toList());
 
-        Launch launch = new Launch();
+        Launch launch = (Launch) new Launch().withName(launchNamePrefix + " " + new Date());
         launch.setTestCaseTree(new LaunchTestCaseTree().withTestCases(launchTestCases));
 
-        /////////////////////////
+//        /////////////////////////
         try {
             getLog().info("/////////////////// LAUNCH: ");
 
@@ -91,6 +98,16 @@ public class QuackJunitResultsImport extends AbstractMojo{
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+        getLog().info("Starting launch import to QuAck");
+        QuackClient client = QuackClietnUtils.getClient(apiToken, apiEndpoint, apiTimeout);
+        try {
+            client.createLaunch(quackProject, launch).execute();
+        } catch (IOException e) {
+            getLog().error("Unable to import launch to QuAck", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private LaunchTestCase convertTestcase(ReportTestCase reportTestCase) {
@@ -101,8 +118,12 @@ public class QuackJunitResultsImport extends AbstractMojo{
                 withFailureTrace(reportTestCase.getFailureDetail());
         try {
             launchTestCase.setAlias(getMd5String(reportTestCase.getFullName()));
+
+
+            getLog().info("Import alias " + reportTestCase.getFullName());
+            getLog().info("Alias " + launchTestCase.getAlias());
         } catch (NoSuchAlgorithmException e) {
-            getLog().warn("Unable to create testcasev alias", e);
+            getLog().warn("Unable to create testcase alias", e);
         }
         return launchTestCase;
     }

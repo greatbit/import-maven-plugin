@@ -1,5 +1,6 @@
 package com.testquack.maven.client;
 
+import com.testquack.beans.Launch;
 import com.testquack.beans.TestCase;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -17,4 +18,7 @@ public interface QuackClient {
 
     @DELETE("{projectId}/testcase")
     Call<Void> deleteTestcasesByImportResource(@Path("projectId") String projectId, @Query("importResource") String importResource);
+
+    @POST("{projectId}/launch")
+    Call<Launch> createLaunch(@Path("projectId") String projectId, @Body Launch launch);
 }

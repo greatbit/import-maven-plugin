@@ -121,6 +121,10 @@ public class QuackJunitImport extends AbstractMojo{
                 withAlias(getHash(method)).
                 withImportResource(importResource).
                 withAutomated(true);
+
+        getLog().info("Import alias " + method.getDeclaringClass().getCanonicalName() + "." + method.getName());
+        getLog().info("Alias " + testCase.getAlias());
+
         testCase.getMetaData().put("class", method.getDeclaringClass());
         testCase.getMetaData().put("method", method.getName());
         testCase.getMetaData().put("parameters", Stream.of(method.getParameterTypes()).map(Class::getName).collect(toList()));
@@ -132,7 +136,7 @@ public class QuackJunitImport extends AbstractMojo{
 
     private String getHash(Method method) {
         try {
-            return getMd5String(method.toString());
+            return getMd5String(method.getDeclaringClass().getCanonicalName() + "." + method.getName());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Unable to create hash for the method " + method, e);
         }
