@@ -25,3 +25,26 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
     </executions>
 </plugin>
 ```
+
+#### Import JUmit4 tests results
+```
+<plugin>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>import-maven-plugin</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+        <apiToken>abc</apiToken>
+        <quackProject>quackui</quackProject>
+        <apiEndpoint>http://quack.com/api/</apiEndpoint>
+        <junitXmlResource>${project.build.directory}/surefire-reports</junitXmlResource>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>test</phase>
+            <goals>
+                <goal>junit-results-import</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
