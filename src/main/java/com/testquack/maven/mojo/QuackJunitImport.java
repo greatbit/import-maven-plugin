@@ -29,18 +29,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_TEST_CLASSES;
 import static ru.greatbit.utils.string.StringUtils.getMd5String;
 
 
 /**
  * Created by azee on 21.08.19.
  */
-@Mojo(name = "junit-import", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(name = "junit-import", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = PROCESS_TEST_CLASSES)
 public class QuackJunitImport extends AbstractMojo{
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
@@ -121,9 +121,6 @@ public class QuackJunitImport extends AbstractMojo{
                 withAlias(getHash(method)).
                 withImportResource(importResource).
                 withAutomated(true);
-
-        getLog().info("Import alias " + method.getDeclaringClass().getCanonicalName() + "." + method.getName());
-        getLog().info("Alias " + testCase.getAlias());
 
         testCase.getMetaData().put("class", method.getDeclaringClass());
         testCase.getMetaData().put("method", method.getName());

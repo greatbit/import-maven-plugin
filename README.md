@@ -17,7 +17,7 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
     </configuration>
     <executions>
         <execution>
-            <phase>process-test-classes</phase>
+            <id>quack-testcases-import</id>
             <goals>
                 <goal>junit-import</goal>
             </goals>
@@ -40,7 +40,7 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
     </configuration>
     <executions>
         <execution>
-            <phase>test</phase>
+            <id>quack-results-import</id>
             <goals>
                 <goal>junit-results-import</goal>
             </goals>

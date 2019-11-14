@@ -16,7 +16,6 @@ import org.apache.maven.plugins.surefire.report.ReportTestCase;
 import org.apache.maven.plugins.surefire.report.ReportTestSuite;
 import org.apache.maven.plugins.surefire.report.SurefireReportParser;
 import org.apache.maven.reporting.MavenReportException;
-import ru.greatbit.utils.serialize.JsonSerializer;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +27,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
 import static ru.greatbit.utils.string.StringUtils.getMd5String;
 
-@Mojo(name = "junit-results-import", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(name = "junit-results-import", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = TEST)
 public class QuackJunitResultsImport extends AbstractMojo{
 
     @Parameter(property = "junitXmlPath", defaultValue = "${project.build.directory}/surefire-reports")
@@ -79,26 +79,6 @@ public class QuackJunitResultsImport extends AbstractMojo{
 
         Launch launch = (Launch) new Launch().withName(launchNamePrefix + " " + new Date());
         launch.setTestCaseTree(new LaunchTestCaseTree().withTestCases(launchTestCases));
-
-//        /////////////////////////
-        try {
-            getLog().info("/////////////////// LAUNCH: ");
-
-            testSuites.stream().
-                    flatMap(testSuite -> testSuite.getTestCases().stream()).
-                    forEach(testSuite -> {
-                        try {
-                            getLog().info(JsonSerializer.marshal(testSuites));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-            getLog().info(JsonSerializer.marshal(launch));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
 
         getLog().info("Starting launch import to QuAck");
         QuackClient client = QuackClietnUtils.getClient(apiToken, apiEndpoint, apiTimeout);
