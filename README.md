@@ -29,7 +29,7 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
 #### Import JUmit4 tests results
 ```
 <plugin>
-    <groupId>${project.groupId}</groupId>
+    <groupId>com.testquack</groupId>
     <artifactId>import-maven-plugin</artifactId>
     <version>1.0</version>
     <configuration>
