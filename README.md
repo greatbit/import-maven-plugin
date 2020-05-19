@@ -9,7 +9,7 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
 <plugin>
     <groupId>com.testquack</groupId>
     <artifactId>import-maven-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <configuration>
         <apiToken>abc</apiToken>
         <quackProject>quackui</quackProject>
@@ -31,7 +31,7 @@ The plugin allows importing testcases to [QuAck](https://testquack.com). All mod
 <plugin>
     <groupId>com.testquack</groupId>
     <artifactId>import-maven-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <configuration>
         <apiToken>abc</apiToken>
         <quackProject>quackui</quackProject>
