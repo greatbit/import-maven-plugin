@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
+import static com.testquack.beans.LaunchStatus.BROKEN;
+import static com.testquack.beans.LaunchStatus.FAILED;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
 import static ru.greatbit.utils.string.StringUtils.getMd5String;
 
@@ -51,6 +54,8 @@ public class QuackJunitResultsImport extends AbstractMojo{
     @Parameter(property = "launchNamePrefix", name = "launchNamePrefix", defaultValue = "Junit Import")
     private String launchNamePrefix;
 
+    private final Map<String, LaunchTestCase> testcasesByAlias = new HashMap<>();
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!junitXmlResource.isDirectory()) {
@@ -63,6 +68,11 @@ public class QuackJunitResultsImport extends AbstractMojo{
         List<ReportTestSuite> testSuites;
         try {
             testSuites = parser.parseXMLReportFiles();
+
+            ///////////////////
+            getLog().info("/////////////////// Got testsuites " + testSuites.stream().map(ReportTestSuite::getName));
+            ///////////////////
+
         } catch (MavenReportException e) {
             throw new MojoExecutionException("Could not parse XML reports", e);
         }
@@ -70,12 +80,23 @@ public class QuackJunitResultsImport extends AbstractMojo{
             getLog().warn("XML reports not found in " + junitXmlResource);
         }
 
-        List<LaunchTestCase> launchTestCases =
-                testSuites.stream().
-                        flatMap(testSuite -> testSuite.getTestCases().stream()).
-                        filter(Objects::nonNull).
-                        map(this::convertTestcase).
-                        collect(toList());
+        // Tests might be parametrised.
+        // If a single parameter fails - all test is considered to fail.
+        testSuites.stream().
+                flatMap(testSuite -> testSuite.getTestCases().stream()).
+                filter(Objects::nonNull).
+                forEach(reportTestCase -> {
+                    String alias = getAlias(reportTestCase);
+                    LaunchTestCase testCaseToStore = convertTestcase(reportTestCase);
+                    LaunchTestCase preservedTestcase = testcasesByAlias.get(alias);
+                    if (preservedTestcase == null ||
+                            (!isFailed(preservedTestcase) && isFailed(testCaseToStore))){
+                        testcasesByAlias.put(alias, testCaseToStore);
+                    }
+                });
+
+
+        List<LaunchTestCase> launchTestCases = new ArrayList<>(testcasesByAlias.values());
 
         Launch launch = (Launch) new Launch().withName(launchNamePrefix + " " + new Date());
         launch.setTestCaseTree(new LaunchTestCaseTree().withTestCases(launchTestCases));
@@ -90,22 +111,32 @@ public class QuackJunitResultsImport extends AbstractMojo{
         }
     }
 
+    private boolean isFailed(LaunchTestCase preservedTestcase) {
+        return preservedTestcase.getLaunchStatus() == FAILED || preservedTestcase.getLaunchStatus() == BROKEN;
+    }
+
+    private String getAlias(ReportTestCase reportTestCase) {
+        String fullNameNoParameters = reportTestCase.getFullName().split("\\[")[0];
+        try {
+            return getMd5String(fullNameNoParameters);
+        } catch (NoSuchAlgorithmException e) {
+            getLog().warn("Unable to create testcase alias", e);
+            return null;
+        }
+    }
+
     private LaunchTestCase convertTestcase(ReportTestCase reportTestCase) {
-        LaunchTestCase launchTestCase = new LaunchTestCase().
+
+        ///////////////////
+        getLog().info("/////////////////// Converting report testcase " + reportTestCase.getFullName());
+        ///////////////////
+
+        return (LaunchTestCase) new LaunchTestCase().
                 withDuration(new Float(reportTestCase.getTime()).longValue()).
                 withLaunchStatus(convertStatus(reportTestCase)).
                 withFailureMessage(reportTestCase.getFailureMessage()).
-                withFailureTrace(reportTestCase.getFailureDetail());
-        try {
-            launchTestCase.setAlias(getMd5String(reportTestCase.getFullName()));
-
-
-            getLog().info("Import alias " + reportTestCase.getFullName());
-            getLog().info("Alias " + launchTestCase.getAlias());
-        } catch (NoSuchAlgorithmException e) {
-            getLog().warn("Unable to create testcase alias", e);
-        }
-        return launchTestCase;
+                withFailureTrace(reportTestCase.getFailureDetail()).
+                withAlias(getAlias(reportTestCase));
     }
 
     private LaunchStatus convertStatus(ReportTestCase reportTestCase) {
@@ -116,7 +147,7 @@ public class QuackJunitResultsImport extends AbstractMojo{
             case "skipped":
                 return LaunchStatus.SKIPPED;
             default:
-                return LaunchStatus.FAILED;
+                return FAILED;
         }
 
     }
